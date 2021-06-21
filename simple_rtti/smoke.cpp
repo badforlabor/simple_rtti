@@ -4,7 +4,7 @@
 #include <iostream>
 #include <assert.h>
 #include "simple_rtti.h"
-using namespace rtti;
+//using namespace rtti;
 #define USEMacro 1
 
 class ClassBase : public rtti::SimpleRtti
@@ -13,12 +13,12 @@ class ClassBase : public rtti::SimpleRtti
 	DECLARE_RTTI(ClassBase, rtti::SimpleRtti);
 #else
 public:
-	static const RttiType* StaticClass()
+	static const rtti::RttiType* StaticClass()
 	{
-		static auto Inside = RttiType::New("ClassBase", rtti::SimpleRtti::StaticClass());
+		static auto Inside = rtti::RttiType::New("ClassBase", rtti::SimpleRtti::StaticClass());
 		return Inside;
 	}
-	virtual const RttiType* GetType() const override
+	virtual const rtti::RttiType* GetType() const override
 	{
 		return ClassBase::StaticClass();
 	}
@@ -38,12 +38,12 @@ class ClassA : public ClassBase
 	DECLARE_RTTI(ClassA, ClassBase);
 #else
 public:
-	static const RttiType* StaticClass()
+	static const rtti::RttiType* StaticClass()
 	{
-		static auto Inside = RttiType::New("ClassA", ClassBase::StaticClass());
+		static auto Inside = rtti::RttiType::New("ClassA", ClassBase::StaticClass());
 		return Inside;
 	}
-	virtual const RttiType* GetType() const override
+	virtual const rtti::RttiType* GetType() const override
 	{
 		return ClassA::StaticClass();
 	}
@@ -61,12 +61,12 @@ class ClassAA : public ClassA
 	DECLARE_RTTI(ClassAA, ClassA);
 #else
 public:
-	static const RttiType* StaticClass()
+	static const rtti::RttiType* StaticClass()
 	{
-		static auto Inside = RttiType::New("ClassAA", ClassA::StaticClass());
+		static auto Inside = rtti::RttiType::New("ClassAA", ClassA::StaticClass());
 		return Inside;
 	}
-	virtual const RttiType* GetType() const override
+	virtual const rtti::RttiType* GetType() const override
 	{
 		return ClassAA::StaticClass();
 }
@@ -85,12 +85,12 @@ class ClassB : public ClassBase
 	DECLARE_RTTI(ClassB, ClassBase);
 #else
 public:
-	static const RttiType* StaticClass()
+	static const rtti::RttiType* StaticClass()
 	{
-		static auto Inside = RttiType::New("ClassB", ClassBase::StaticClass());
+		static auto Inside = rtti::RttiType::New("ClassB", ClassBase::StaticClass());
 		return Inside;
 	}
-	virtual const RttiType* GetType() const override
+	virtual const rtti::RttiType* GetType() const override
 	{
 		return ClassB::StaticClass();
 	}
@@ -183,42 +183,42 @@ int TestAll()
 	std::cout << "--------------------" << std::endl;
 
 	{
-		assert(TypeId<ClassBase>()->ClsName == "ClassBase");
-		assert(TypeId<ClassA>()->ClsName == "ClassA");
-		assert(TypeId<ClassAA>()->ClsName == "ClassAA");
+		assert(rtti::TypeId<ClassBase>()->ClsName == "ClassBase");
+		assert(rtti::TypeId<ClassA>()->ClsName == "ClassA");
+		assert(rtti::TypeId<ClassAA>()->ClsName == "ClassAA");
 	}
 
 	{
-		assert(TypeOf(Base)->ClsName == "ClassBase");
-		assert(TypeOf(A)->ClsName == "ClassA");
-		assert(TypeOf(AA)->ClsName == "ClassAA");
+		assert(rtti::TypeOf(Base)->ClsName == "ClassBase");
+		assert(rtti::TypeOf(A)->ClsName == "ClassA");
+		assert(rtti::TypeOf(AA)->ClsName == "ClassAA");
 	}
 	
 #if 0
 	{
 		// 验证const
-		TypeOf(Base)->ClsName = "1";
-		TypeOf(Base)->Parent = nullptr;
-		TypeOf(Base)->TypeId = 1;
+		rtti::TypeOf(Base)->ClsName = "1";
+		rtti::TypeOf(Base)->Parent = nullptr;
+		rtti::TypeOf(Base)->rtti::TypeId = 1;
 	}
 #endif
 
 	{
-		auto One = Cast<ClassA>(A);
+		auto One = rtti::Cast<ClassA>(A);
 		assert(One != nullptr);
 		One->ShowMe();
 	}
 	{
-		auto One = Cast<ClassAA>(A);
+		auto One = rtti::Cast<ClassAA>(A);
 		assert(One == nullptr);
 	}
 	{
-		auto One = Cast<ClassA>(AA);
+		auto One = rtti::Cast<ClassA>(AA);
 		assert(One != nullptr);
 		One->ShowMe();
 	}
 	{
-		auto One = Cast<ClassAA>(AA);
+		auto One = rtti::Cast<ClassAA>(AA);
 		assert(One != nullptr);
 		One->ShowMe();
 	}

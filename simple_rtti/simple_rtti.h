@@ -144,12 +144,12 @@ namespace rtti
 
 #define DECLARE_RTTI(Cls, ParentCls) \
 public: \
-	static const RttiType* StaticClass() \
+	static const rtti::RttiType* StaticClass() \
 	{ \
-		static auto Inside = RttiType::New(#Cls, ParentCls::StaticClass()); \
+		static auto Inside = rtti::RttiType::New(#Cls, ParentCls::StaticClass()); \
 		return Inside; \
 	} \
-	virtual const RttiType* GetType() const override \
+	virtual const rtti::RttiType* GetType() const override \
 	{ \
 		return Cls::StaticClass(); \
 	}
