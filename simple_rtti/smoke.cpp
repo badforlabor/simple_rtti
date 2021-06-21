@@ -31,6 +31,7 @@ public:
 	}
 
 };
+IMPLEMENT_RTTI(ClassBase);
 
 class ClassA : public ClassBase
 {
@@ -54,6 +55,7 @@ public:
 		std::cout << "A" << std::endl;
 	}
 };
+IMPLEMENT_RTTI(ClassA);
 
 class ClassAA : public ClassA
 {
@@ -78,6 +80,7 @@ public:
 		std::cout << "AA" << std::endl;
 	}
 };
+IMPLEMENT_RTTI(ClassAA);
 
 class ClassB : public ClassBase
 {
@@ -102,6 +105,7 @@ public:
 		std::cout << "B" << std::endl;
 	}
 };
+IMPLEMENT_RTTI(ClassB);
 
 
 int TestAll()
@@ -116,6 +120,10 @@ int TestAll()
 	ClassBase* A = new ClassA();
 	ClassBase* AA = new ClassAA();
 	ClassBase* B = new ClassB();
+	
+#if DEBUG_RTTI_TYPE
+	assert(ClassB::StaticClassId->ClsName == "ClassB");
+#endif
 
 	{
 		auto One = Base->Cast<ClassA>();

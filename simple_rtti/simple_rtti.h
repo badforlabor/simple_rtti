@@ -48,35 +48,30 @@
 
 namespace rtti
 {
+#define DEBUG_RTTI_TYPE 0
+
 	class RttiType
 	{
 	protected:
 
-		RttiType(const RttiType* InParent, const char* InClsName = "")
-			: TypeId(GetUniqueId()), Parent(InParent), ClsName(InClsName)
+		RttiType(const RttiType* InParent, int UniqueId, const char* InClsName = "")
+			: TypeId(UniqueId), ClsName(InClsName), Parent(InParent)
 		{
 
 		}
-		RttiType(const char* InClsName) : RttiType(nullptr, InClsName)
+		RttiType(const char* InClsName) : RttiType(nullptr, GetUniqueId(), InClsName)
 		{
 
 		}
-		RttiType() : RttiType(nullptr, "")
+		RttiType() : RttiType("")
 		{
 
 		}
-
-		static int GetUniqueId()
-		{
-			static int Id = 0;
-			Id++;
-			return Id;
-		}
-
+		
 	public:
 		int TypeId = 0;
-		const RttiType *Parent = nullptr;
 		const char* ClsName = "";
+		const RttiType *Parent = nullptr;
 
 		bool IsA(const RttiType* TargetType) const
 		{
@@ -91,11 +86,25 @@ namespace rtti
 			return false;
 		}
 
-		static const RttiType* New(const char* InClsName, const RttiType* InParent = nullptr)
+		static const RttiType* New(const char* InClsName, const RttiType* InParent, int UniqueId)
 		{
-			return new RttiType(InParent, InClsName);
+			return new RttiType(InParent, UniqueId, InClsName);
+		}
+		static const RttiType* New(const char* InClsName, const RttiType* InParent)
+		{
+			return New(InClsName, InParent, GetUniqueId());
+		}
+		static const RttiType* New(const char* InClsName)
+		{
+			return New(InClsName, nullptr);
 		}
 
+		static int GetUniqueId()
+		{
+			static int Id = 0;
+			Id++;
+			return Id;
+		}
 	};
 
 	class SimpleRtti
@@ -110,6 +119,9 @@ namespace rtti
 		{
 			return StaticClass();
 		}
+#if DEBUG_RTTI_TYPE
+		static const RttiType* StaticClassId;
+#endif
 	public:
 		template<class ChildClass>
 		ChildClass* Cast()
@@ -152,8 +164,17 @@ namespace rtti
 		return b->Cast<A>();
 	}
 
+	// 加入一些可调式信息
+#if DEBUG_RTTI_TYPE
+	#define DECLARE_RTTI_DEBUG(Cls, ParentCls) \
+	static const rtti::RttiType* StaticClassId;
+#else
+	#define DECLARE_RTTI_DEBUG(Cls, ParentCls)
+#endif
+
 #define DECLARE_RTTI(Cls, ParentCls) \
 public: \
+	DECLARE_RTTI_DEBUG(Cls, ParentCls) \
 	static const rtti::RttiType* StaticClass() \
 	{ \
 		static auto Inside = rtti::RttiType::New(#Cls, ParentCls::StaticClass()); \
@@ -164,4 +185,10 @@ public: \
 		return Cls::StaticClass(); \
 	}
 
+#if DEBUG_RTTI_TYPE
+#define IMPLEMENT_RTTI(Cls) \
+	const rtti::RttiType* Cls::StaticClassId = Cls::StaticClass();
+#else
+#define IMPLEMENT_RTTI(Cls)
+#endif
 }
