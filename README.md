@@ -21,6 +21,30 @@ simple_rtti.h
 ### 例子
 
 ```
+	
+class ClassBase : public rtti::SimpleRtti
+{
+	DECLARE_RTTI(ClassBase, rtti::SimpleRtti);
+public:
+	virtual void ShowMe()
+	{
+		std::cout << "base" << std::endl;
+	}
+
+};
+
+class ClassA : public ClassBase
+{
+	DECLARE_RTTI(ClassA, ClassBase);
+public:
+	virtual void ShowMe() override
+	{
+		std::cout << "A" << std::endl;
+	}
+};
+	
+void Test()
+{
 	ClassBase* A = new ClassA();
 	
 	assert(A->IsA<ClassA>());
@@ -31,6 +55,7 @@ simple_rtti.h
 
 	assert(TypeOf(A)->ClsName == "ClassA");
 	assert(TypeId<ClassA>()->ClsName == "ClassA");
+}
 ```
 
 
