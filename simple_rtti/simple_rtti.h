@@ -116,9 +116,14 @@ namespace rtti
 		{
 			return IsA<ChildClass>() ? static_cast<ChildClass*>(this) : nullptr;
 		}
+		template<class ChildClass>
+		const ChildClass* Cast() const
+		{
+			return IsA<ChildClass>() ? static_cast<const ChildClass*>(this) : nullptr;
+		}
 
 		template<class ChildClass>
-		bool IsA()
+		bool IsA() const
 		{
 			return GetType()->IsA(ChildClass::StaticClass());
 		}
@@ -138,6 +143,11 @@ namespace rtti
 	
 	template<class A, class B>
 	A* Cast(B* b)
+	{
+		return b->Cast<A>();
+	}
+	template<class A, class B>
+	const A* Cast(const B* b)
 	{
 		return b->Cast<A>();
 	}

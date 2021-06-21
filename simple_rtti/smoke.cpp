@@ -222,6 +222,19 @@ int TestAll()
 		assert(One != nullptr);
 		One->ShowMe();
 	}
+
+
+	// const cast
+	{
+		const ClassBase* AAa = new ClassAA();
+		const ClassA* A1 = rtti::Cast<ClassA>(AAa);
+
+		// Comple Error
+		//ClassA* A2 = rtti::Cast<ClassA>(AAa);
+
+		auto A3 = rtti::Cast<ClassA>(AAa);
+	}
+
 	return 0;
 }
 
